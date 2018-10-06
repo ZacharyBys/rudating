@@ -1,5 +1,5 @@
 from flask import Flask, request, Response
-from users import createUser, getUser
+from users import createUser, getUser, activateUser
 import json
 
 app = Flask(__name__)
@@ -31,3 +31,14 @@ def retrieveUser():
         return json.dumps({'success':False}), 400, {'ContentType':'application/json'}
     else:
         return json.dumps(result), 200, {'ContentType':'application/json'} 
+
+@app.route('/user/activate', methods=['POST'])
+def activate():
+    id = request.args.get('id')
+
+    result = activateUser(int(id))
+
+    if result == -1:
+        return json.dumps({'success':False}), 400, {'ContentType':'application/json'}
+    else:
+        return json.dumps({'success':True}), 200, {'ContentType':'application/json'} 

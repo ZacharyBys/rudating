@@ -1,5 +1,6 @@
-from flask import Flask, request
+from flask import Flask, request, Response
 from users import createUser
+import json
 
 app = Flask(__name__)
 
@@ -13,4 +14,9 @@ def newUser():
     lastName = request.form['lastName']
     gender = request.form['gender']
     number = request.form['number']
-    return createUser(firstName, lastName, gender, number)
+
+    code = createUser(firstName, lastName, gender, number)
+    if code == 1:
+        return json.dumps({'success':True}), 200, {'ContentType':'application/json'} 
+    else:
+        return json.dumps({'success':False}), 400, {'ContentType':'application/json'} 

@@ -20,3 +20,19 @@ def createUser(firstName, lastName, gender, number):
         return resultId
     else:
         return -1
+
+def getUser(userId):
+    userId = userId if userId != None else 0
+    
+    key = client.key('Users', userId)
+    entity = client.get(key)
+    print('in')
+
+    if entity != None:
+        user = {}
+        for key, value in entity.items():
+            user[key] = value
+
+        return user
+    else:
+        return -1

@@ -1,5 +1,5 @@
 from flask import Flask, request, Response
-from users import createUser
+from users import createUser, getUser
 import json
 
 app = Flask(__name__)
@@ -20,3 +20,14 @@ def newUser():
         return json.dumps({'id':code, 'firstName':firstName, 'lastName':lastName, 'gender':gender, 'number':number, 'success':True}), 200, {'ContentType':'application/json'} 
     else:
         return json.dumps({'success':False}), 400, {'ContentType':'application/json'} 
+
+@app.route('/user', methods=['GET'])
+def retrieveUser():
+    id = request.args.get('id')
+
+    result = getUser(int(id))
+
+    if result == -1:
+        return json.dumps({'success':False}), 400, {'ContentType':'application/json'}
+    else:
+        return json.dumps(result), 200, {'ContentType':'application/json'} 

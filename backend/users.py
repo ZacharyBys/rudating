@@ -17,6 +17,6 @@ def createUser(firstName, lastName, gender, number):
     resultId = client.get(key).id
 
     if resultId == key.id:
-        return 1
+        return resultId
     else:
         return -1

@@ -35,14 +35,37 @@ def retrieveUser():
 @app.route('/user/activate', methods=['PUT'])
 def activate():
     id = request.args.get('id')
-    deactivate = request.args.get('deactivate') if request.args.get('deactivate') else False
+    result = activateUser(int(id), True)
 
-    if request.args.get('inchat') == 'true':
-        userIsInChat(int(id), True)
+    if result == -1:
+        return json.dumps({'success':False}), 400, {'ContentType':'application/json'}
     else:
-        userIsInChat(int(id), False)
+        return json.dumps({'success':True}), 200, {'ContentType':'application/json'}
 
-    result = activateUser(int(id), deactivate)
+@app.route('/user/deactivate', methods=['PUT'])
+def deactivate():
+    id = request.args.get('id')
+    result = activateUser(int(id), False)
+
+    if result == -1:
+        return json.dumps({'success':False}), 400, {'ContentType':'application/json'}
+    else:
+        return json.dumps({'success':True}), 200, {'ContentType':'application/json'}
+
+@app.route('/user/inchat', methods=['PUT'])
+def inChat():
+    id = request.args.get('id')
+    result = userIsInChat(int(id), True)
+
+    if result == -1:
+        return json.dumps({'success':False}), 400, {'ContentType':'application/json'}
+    else:
+        return json.dumps({'success':True}), 200, {'ContentType':'application/json'}
+
+@app.route('/user/outchat', methods=['PUT'])
+def outChat():
+    id = request.args.get('id')
+    result = userIsInChat(int(id), False)
 
     if result == -1:
         return json.dumps({'success':False}), 400, {'ContentType':'application/json'}

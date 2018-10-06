@@ -39,16 +39,16 @@ def getUser(userId):
     else:
         return -1
 
-def activateUser(userId, deactivate):
+def activateUser(userId, activate):
     userId = userId if userId != None else 0
 
     key = client.key('Users', userId)
     entity = client.get(key)
 
-    if deactivate:
-        entity['active'] = False
-    else:
+    if activate:
         entity['active'] = True
+    else:
+        entity['active'] = False
 
     entity.active = True
     client.put(entity)

@@ -58,3 +58,22 @@ def activateUser(userId, deactivate):
         return resultId
     else:
         return -1
+
+def userIsInChat(userId, inChat):
+    userId = userId if userId != None else 0
+
+    key = client.key('Users', userId)
+    entity = client.get(key)
+
+    if inChat == True:
+        entity['inChat'] = True
+    else:
+        entity['inChat'] = False
+
+    client.put(entity)
+    resultId = client.get(key).id
+
+    if resultId == key.id:
+        return resultId
+    else:
+        return -1

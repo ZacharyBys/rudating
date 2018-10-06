@@ -1,8 +1,10 @@
 from flask import Flask, request, Response
 from users import createUser, getUser, activateUser, userIsInChat
+from flask_cors import CORS
 import json
 
 app = Flask(__name__)
+CORS(app)
 
 @app.route('/')
 def hello_world():

@@ -12,6 +12,8 @@ def createUser(firstName, lastName, gender, number):
         'lastName':lastName,
         'gender':gender,
         'number':number,
+        'active':False,
+        'inChat':False,
     })
     client.put(entity)
     resultId = client.get(key).id
@@ -34,5 +36,44 @@ def getUser(userId):
             user[key] = value
 
         return user
+    else:
+        return -1
+
+def activateUser(userId, activate):
+    userId = userId if userId != None else 0
+
+    key = client.key('Users', userId)
+    entity = client.get(key)
+
+    if activate:
+        entity['active'] = True
+    else:
+        entity['active'] = False
+
+    entity.active = True
+    client.put(entity)
+    resultId = client.get(key).id
+
+    if resultId == key.id:
+        return resultId
+    else:
+        return -1
+
+def userIsInChat(userId, inChat):
+    userId = userId if userId != None else 0
+
+    key = client.key('Users', userId)
+    entity = client.get(key)
+
+    if inChat == True:
+        entity['inChat'] = True
+    else:
+        entity['inChat'] = False
+
+    client.put(entity)
+    resultId = client.get(key).id
+
+    if resultId == key.id:
+        return resultId
     else:
         return -1

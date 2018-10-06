@@ -1,6 +1,6 @@
 from flask import Flask, request, Response
+from users import createUser, getUser, activateUser, userIsInChat
 from flask_cors import CORS
-from users import createUser, getUser
 import json
 
 app = Flask(__name__)
@@ -12,7 +12,7 @@ def hello_world():
 
 @app.route('/users', methods=['POST'])
 def newUser():
-    data = request.get_json();
+    data = request.get_json()
     firstName = data['firstName']
     lastName = data['lastName']
     gender = data['gender']
@@ -34,3 +34,43 @@ def retrieveUser():
         return json.dumps({'success':False}), 400, {'ContentType':'application/json'}
     else:
         return json.dumps(result), 200, {'ContentType':'application/json'} 
+
+@app.route('/user/activate', methods=['PUT'])
+def activate():
+    id = request.args.get('id')
+    result = activateUser(int(id), True)
+
+    if result == -1:
+        return json.dumps({'success':False}), 400, {'ContentType':'application/json'}
+    else:
+        return json.dumps({'success':True}), 200, {'ContentType':'application/json'}
+
+@app.route('/user/deactivate', methods=['PUT'])
+def deactivate():
+    id = request.args.get('id')
+    result = activateUser(int(id), False)
+
+    if result == -1:
+        return json.dumps({'success':False}), 400, {'ContentType':'application/json'}
+    else:
+        return json.dumps({'success':True}), 200, {'ContentType':'application/json'}
+
+@app.route('/user/inchat', methods=['PUT'])
+def inChat():
+    id = request.args.get('id')
+    result = userIsInChat(int(id), True)
+
+    if result == -1:
+        return json.dumps({'success':False}), 400, {'ContentType':'application/json'}
+    else:
+        return json.dumps({'success':True}), 200, {'ContentType':'application/json'}
+
+@app.route('/user/outchat', methods=['PUT'])
+def outChat():
+    id = request.args.get('id')
+    result = userIsInChat(int(id), False)
+
+    if result == -1:
+        return json.dumps({'success':False}), 400, {'ContentType':'application/json'}
+    else:
+        return json.dumps({'success':True}), 200, {'ContentType':'application/json'}

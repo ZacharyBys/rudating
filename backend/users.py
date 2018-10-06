@@ -14,6 +14,9 @@ def createUser(firstName, lastName, gender, number):
         'number':number,
     })
     client.put(entity)
-    result = client.get(key)
+    resultId = client.get(key).id
 
-    return 'User Created'
+    if resultId == key.id:
+        return 1
+    else:
+        return -1

@@ -1,3 +1,4 @@
 flask-socketio
 eventlet
 google-cloud-datastore
+flask-cors

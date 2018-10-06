@@ -10,10 +10,11 @@ def hello_world():
 
 @app.route('/users', methods=['POST'])
 def newUser():
-    firstName = request.form['firstName']
-    lastName = request.form['lastName']
-    gender = request.form['gender']
-    number = request.form['number']
+    data = request.get_json()
+    firstName = data['firstName']
+    lastName = data['lastName']
+    gender = data['gender']
+    number = data['number']
 
     code = createUser(firstName, lastName, gender, number)
     if code != -1:

@@ -35,8 +35,9 @@ def retrieveUser():
 @app.route('/user/activate', methods=['POST'])
 def activate():
     id = request.args.get('id')
+    deactivate = request.args.get('deactivate') if request.args.get('deactivate') else False
 
-    result = activateUser(int(id))
+    result = activateUser(int(id), deactivate)
 
     if result == -1:
         return json.dumps({'success':False}), 400, {'ContentType':'application/json'}

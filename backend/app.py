@@ -1,8 +1,10 @@
 from flask import Flask, request, Response
+from flask_cors import CORS
 from users import createUser, getUser
 import json
 
 app = Flask(__name__)
+CORS(app)
 
 @app.route('/')
 def hello_world():
@@ -10,10 +12,11 @@ def hello_world():
 
 @app.route('/users', methods=['POST'])
 def newUser():
-    firstName = request.form['firstName']
-    lastName = request.form['lastName']
-    gender = request.form['gender']
-    number = request.form['number']
+    data = request.get_json();
+    firstName = data['firstName']
+    lastName = data['lastName']
+    gender = data['gender']
+    number = data['number']
 
     code = createUser(firstName, lastName, gender, number)
     if code != -1:

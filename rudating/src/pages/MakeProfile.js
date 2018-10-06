@@ -36,15 +36,7 @@ class MakeProfile extends React.Component {
         } = this.state;
 
         try {
-            await register({ 
-                user: {
-                    firstName,
-                    lastName,
-                    number,
-                    gender,
-                },
-            });
-
+            await register(firstName, lastName, number, gender);
             this.setState({ success: true });
         } catch(error) {
             this.setState({ 

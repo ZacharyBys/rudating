@@ -1,23 +1,27 @@
 from flask import Flask, request, Response
-from flask_uploads import UploadSet, configure_uploads, IMAGES
+from flask_socketio import SocketIO, emit, send, join_room
 from flask_cors import CORS
+from flask_uploads import UploadSet, configure_uploads, IMAGES
 from users import createUser, getUser, activateUser, userIsInChat
 from profilepic import upload_picture
-import json
+from matchingThread import MatchingThread
+import json, time
+
 
 app = Flask(__name__)
-
-photos = UploadSet('photos', IMAGES)
-
+app.config['SECRET_KEY'] = 'VdC8xBfJ4u66hycU'
 app.config['UPLOAD_FOLDER'] = 'pictures'
 app.config['UPLOADED_PHOTOS_DEST'] = 'pictures'
-configure_uploads(app, photos)
 
+socketio = SocketIO(app)
+photos = UploadSet('photos', IMAGES)
+configure_uploads(app, photos)
 CORS(app)
 
 @app.route('/')
 def hello_world():
-    return 'Hello, World!'
+    socketio.emit('Hello')
+    return 'Hello, World!!'
 
 @app.route('/users', methods=['POST'])
 def newUser():
@@ -33,6 +37,7 @@ def newUser():
     else:
         return json.dumps({'success':False}), 400, {'ContentType':'application/json'} 
 
+
 @app.route('/user', methods=['GET'])
 def retrieveUser():
     id = request.args.get('id')
@@ -40,7 +45,7 @@ def retrieveUser():
     result = getUser(int(id))
 
     if result == -1:
-        return json.dumps({'success':False}), 400, {'ContentType':'application/json'}
+        return json.dumps({'success': False}), 400, {'ContentType': 'application/json'}
     else:
         return json.dumps(result), 200, {'ContentType':'application/json'} 
 
@@ -95,3 +100,22 @@ def uploadPicture():
             return json.dumps({'success':False}), 400, {'ContentType':'application/json'}
         else:
             return json.dumps({'link':link}), 200, {'ContentType':'application/json'}
+
+
+@socketio.on('connect')
+def handleConnect():
+    print(request.sid)
+    emit('connected', request.sid, room=request.sid)
+
+
+@socketio.on('message')
+def handleMessage(msg):
+    print('ClientID:' + request.sid)
+    emit('message', msg, room=request.sid)
+
+
+socketio.run(app, debug=True, use_reloader=False)
+backgroundThread = MatchingThread(socketio)
+
+print('starting thread')
+backgroundThread.start()

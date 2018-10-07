@@ -5,7 +5,7 @@ import socketIOClient from 'socket.io-client'
 import UserCard from '../components/UserCard';
 import Chatroom from '../components/Chatroom';
 import SelectionModal from '../components/SelectionModal';
-import { activate, getUser, updateSId } from '../util/ApiUtil';
+import { activate, getUser, updateSId, saveNumber } from '../util/ApiUtil';
 
 const styles = { 
     container: {
@@ -51,10 +51,24 @@ class Lobby extends React.Component {
             });
         });
         socket.on('selectionMade', (gotContact) => {
-              this.setState({
-                  selectionReceived: true,
-                  gotContact,
-              })
+            this.setState({
+                selectionReceived: true,
+                gotContact,
+            }, async () => {
+                if (this.state.gotContact === 2) {
+                    const userId = localStorage.getItem('userId');
+                    const { number } = this.state.otherUser;
+                    try {
+                        await saveNumber(userId, number)
+                        socket.emit('leave', this.state.roomId)
+                        window.location.reload();
+                    } catch (error) {
+
+                    }
+                } else if (this.state.gotContact < 0) {
+                    window.location.reload();
+                }
+            });
         })
     }
 
@@ -147,7 +161,7 @@ class Lobby extends React.Component {
                 }
                 {
                     foundMatch && !timeExpired &&
-                        <Chatroom 
+                        <Chatroom   
                             time={1}
                             onTimerEnd={this.onTimerEnd}
                             user={this.state.user} 

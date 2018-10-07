@@ -47,7 +47,7 @@ class Chatroom extends React.Component {
         return (
             <div className="chatroom">
                 <Header size="huge" textAlign="center" style={{ color: '#cc0033' }}>RU Dating?</Header>
-                <Timer value={100000000} onTimerEnd={this.onTimerEnd}/>
+                <Timer value={time} onTimerEnd={this.props.onTimerEnd}/>
                 <Question question="Pineapple on pizza?"/>
                 <Comment.Group className="chats">
                     {

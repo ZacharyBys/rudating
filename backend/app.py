@@ -145,7 +145,6 @@ def handleJoin(roomId):
 def handleSearch():
     matchResult = match(activeUsers)
     if len(matchResult) != 0:
-        print('TRYING MATCHING NOW')
         firstUser = matchResult[0]
         secondUser = matchResult[1]
         roomId = matchResult[2]

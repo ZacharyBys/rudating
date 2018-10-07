@@ -2,6 +2,10 @@ from flask import Flask, request, Response
 from flask_socketio import SocketIO, emit, send, join_room, leave_room
 from flask_cors import CORS
 from flask_uploads import UploadSet, configure_uploads, IMAGES
+
+from google.cloud import language
+from google.cloud.language import enums
+
 from users import createUser, getUser, getUserByPhone, activateUser, userIsInChat, updateSocketId, getNumbers, addNewNumber
 from profilepic import upload_picture
 # from matchingThread import MatchingThread
@@ -20,8 +24,11 @@ photos = UploadSet('photos', IMAGES)
 configure_uploads(app, photos)
 CORS(app)
 
+client = language.LanguageServiceClient()
+
 activeUsers = []
 selectionTable = {}
+conversationTable = {}
 
 @app.route('/')
 def hello_world():
@@ -177,6 +184,10 @@ def handleMessage(msg):
     roomId = msg['roomId']
     user = msg['user']
     message = msg['message']
+    if roomId not in conversationTable:
+        conversationTable[roomId] = message
+    else:
+        conversationTable[roomId] += message
     emit('messageReceived', (user, message), room=roomId, broadcast=True)
 
 @socketio.on('join')
@@ -203,6 +214,11 @@ def handleSelection(selection):
     elif selectionTable[roomId] == -1 or selectionTable[roomId] == -4:
         emit('selectionMade', -1, room=roomId, broadcast=True)
 
+@socketio.on('sentiment')
+def handleSentiment(roomId):
+    score = calculateSentiment(conversationTable[roomId])
+    emit('sentimentScore', score, room=roomId)
+
 def handleSearch():
     matchResult = match(activeUsers)
     if len(matchResult) != 0:
@@ -215,10 +231,11 @@ def handleSearch():
         socketio.emit('matched', (firstUser, secondUser, question, roomId), room=firstUser['sid'])
         socketio.emit('matched', (secondUser, firstUser, question, roomId), room=secondUser['sid'])
 
-        # return [firstUser['sid'], secondUser['sid'], roomId]
-
-        # join_room(roomId, firstUser['sid'], request.namespace)
-        # join_room(roomId, secondUser['sid'], request.namespace)
+def calculateSentiment(convo):
+    type_ = enums.Document.Type.PLAIN_TEXT
+    document = {'type': type_, 'content': convo}
+    sentiment = client.analyze_sentiment(document).document_sentiment
+    return sentiment.score
 
 
 socketio.run(app, debug=True, use_reloader=False)

@@ -4,3 +4,4 @@ google-cloud-datastore
 flask-cors
 flask-uploads
 google-cloud-storage
+google-cloud-language

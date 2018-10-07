@@ -1,11 +1,17 @@
 import React from 'react';
-import { Modal, Button, Icon } from 'semantic-ui-react';
+import { Modal, Button, Icon, Header } from 'semantic-ui-react';
 
 const SelectionModal = (props) => {
-    const { open, onSelection, selection } = props;
+    const { open, onSelection, selection, sentiment } = props;
     return (
         <Modal open={open} style={{ width: '90%'}}>
-            <Modal.Header>Would you like to continue the conversation?</Modal.Header>
+            <Modal.Header>
+                <div>Would you like to continue the conversation?</div>
+                <Header>
+                    <Icon name="lab"/>
+                    Chemistry: { sentiment }
+                </Header>
+            </Modal.Header>
             <Modal.Content>
                 <Button
                     name="selection"

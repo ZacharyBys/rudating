@@ -6,26 +6,39 @@ import Message from '../components/Message';
 import Timer from './Timer';
 
 class Chatroom extends React.Component {
-    state = {
-        chats: [],
-        message: '',
-        timeExpired: false,
-    };
+    constructor(props) {
+        super(props);
+        this.state = {
+            chats: [],
+            message: '',
+            timeExpired: false,
+            socket: null
+        };
+    }
+
+    componentDidMount() {
+        const { socket } = this.state;
+        socket.on('message', (sender, message) => {
+            this.setState(state => ({
+                chats: state.chats.concat({
+                    username: sender,
+                    content: message,
+                })
+            }));
+        }); 
+    }
 
     handleChange = (e, { value }) => {
         this.setState({ message: value });
     }
 
     handleSubmit = () => {
-        const { message } = this.state;
-        console.log()
-        this.setState((state) => ({
-            chats: state.chats.concat({
-                username: 'Jay',
-                content: message,
-            }), 
+        const { message, socket } = this.state;
+        const { user, roomId } = this.props;
+        socket.emit('message', { firstName: user.firstName, message, roomId });
+        this.setState({ 
             message: '',
-        }));
+        });
     }
 
     onTimerEnd = () => {
@@ -33,8 +46,7 @@ class Chatroom extends React.Component {
     }
 
     render() {
-        const { chats, message, timeExpired } = this.state;
-        const username = 'Jay';
+        const { chats, message, timeExpired, user } = this.state;
         return (
             <div className="chatroom">
                 <Header size="huge" textAlign="center" style={{ color: '#cc0033' }}>RU Dating?</Header>
@@ -43,7 +55,7 @@ class Chatroom extends React.Component {
                 <Comment.Group className="chats">
                     {
                         chats.map((chat, index) => 
-                            <Message key={index} chat={chat} user={username} />
+                            <Message key={index} chat={chat} user={user.firstName} />
                         )
                     }
                 </Comment.Group>

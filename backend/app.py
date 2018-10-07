@@ -4,7 +4,8 @@ from flask_cors import CORS
 from flask_uploads import UploadSet, configure_uploads, IMAGES
 from users import createUser, getUser, activateUser, userIsInChat, updateSocketId
 from profilepic import upload_picture
-from matchingThread import MatchingThread
+# from matchingThread import MatchingThread
+from matchUtil import match
 import json, time
 
 
@@ -42,8 +43,6 @@ def updateSocket():
     if 'id' in request.args and 'sid' in request.args:
         id = request.args.get('id')
         socketId = request.args.get('sid')
-        print('THIS IS ID '+id)
-        print('THIS IS SID '+socketId)
         result = updateSocketId(int(id), socketId)
 
         if result != -1:
@@ -62,7 +61,7 @@ def retrieveUser():
     else:
         return json.dumps(result), 200, {'ContentType':'application/json'} 
 
-@app.route('/user/activate', methods=['PUT'])
+@app.route('/user/activate', methods=['POST'])
 def activate():
     id = request.args.get('id')
     result = activateUser(int(id), True)
@@ -123,12 +122,31 @@ def handleConnect():
 
 @socketio.on('message')
 def handleMessage(msg):
-    print('ClientID:' + request.sid)
-    emit('message', msg, room=request.sid)
+    roomId = msg['roomId']
+    firstName = msg['firstName']
+    message = msg['message']
+    emit('message', (firstName, message), room=roomId, broadcast=True)
 
 
 socketio.run(app, debug=True, use_reloader=False)
-backgroundThread = MatchingThread(socketio)
 
-print('starting thread')
-backgroundThread.start()
+# while True:
+matchResult = match()
+firstUser = matchResult[0]
+firstSId = matchResult[1]
+secondUser = matchResult[2]
+secondSId = matchResult[3]
+roomId = matchResult[4]
+
+socketio.emit('matched', (firstUser, secondUser, roomId), room=firstSId)
+socketio.emit('matched', (firstUser, secondUser, roomId), room=secondSId)
+
+join_room(roomId, firstSId)
+join_room(roomId, secondSId)
+
+# time.sleep(10)
+
+# backgroundThread = MatchingThread(socketio)
+
+# print('starting thread')
+# backgroundThread.start()

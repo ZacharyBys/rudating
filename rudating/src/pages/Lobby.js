@@ -3,7 +3,7 @@ import { Grid, Responsive, Button, Loader } from 'semantic-ui-react';
 import socketIOClient from 'socket.io-client'
 
 import Chatroom from '../components/Chatroom';
-import { updateSId } from '../util/ApiUtil';
+import { activate, updateSId } from '../util/ApiUtil';
 
 const styles = { 
     container: {
@@ -17,7 +17,10 @@ class Lobby extends React.Component {
     state = { 
         searching: false,
         foundMatch: false,
-        socket: false
+        socket: null,
+        user: false,
+        otherUser: false,
+        roomId: ''
      };
 
     componentDidMount() {
@@ -28,17 +31,33 @@ class Lobby extends React.Component {
             const userId = localStorage.getItem('userId');
             await updateSId(userId, data);
             this.setState({
-                socket: socket
+                socket
+            });
+        });
+        socket.on('matched', async (user, otherUser, roomId) => {
+            this.setState({
+                searching: false,
+                foundMatch: true,
+                user,
+                otherUser,
+                roomId
             });
         });
     }
 
-    handleClick = () => {
+    handleClick = async () => {
         this.setState((state) => ({ searching: !state.searching }));
-        this.setState({ 
-            searching: false,
-            foundMatch: true,
-        }); 
+        try {
+            await activate(localStorage.getItem('userId'));
+            this.setState({
+                searching: true
+            }); 
+        } catch (err) {
+            this.setState({
+                searching: false,
+                foundMatch: false
+            })
+        }
     };
 
     render() {
@@ -84,7 +103,7 @@ class Lobby extends React.Component {
                     </Button> 
                 }
                 {
-                    foundMatch && <Chatroom/>
+                    foundMatch && <Chatroom user = { this.state.user } otherUser = { this.state.otherUser } roomId = { this.state.roomId }/>
                 }
             </Responsive>
         </Grid>

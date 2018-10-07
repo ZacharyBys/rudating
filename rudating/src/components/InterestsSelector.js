@@ -23,23 +23,33 @@ const styles = {
     }
 };
 
-class InterestPage extends React.Component {
+class InterestsSelector extends React.Component {
     constructor() {
         super();
 
         this.state = { 
             colors : [false, false, false, false, false, false],
+            count: 0,
         };
     }
 
     handleOne(index) {
+        const { count } = this.state;
         const colors = this.state.colors;
-        colors[index] = colors[index] ? false : true;
-        console.log(colors)
-        this.setState({ 
-            colors: colors,
-        }); 
-    };
+        if (colors[index] === true) {
+            colors[index] = false;
+            this.setState((state) => ({
+                colors,
+                count: state.count - 1
+            }));
+        } else if (count < 2) {
+            colors[index] = true;
+            this.setState((state) => ({ 
+                colors,
+                count: state.count + 1
+            })); 
+        }
+    }
 
     render() {
         var opacity = [6]
@@ -48,6 +58,7 @@ class InterestPage extends React.Component {
             opacity[i] = this.state.colors[i] ? {opacity : 1.0} : {opacity : 0.2}
         }
 
+        const { count } = this.state;
         return (
             <Grid className="home-container" style={styles.container} verticalAlign="middle" centered>
                 <Responsive as={Grid.Column} style={{ width: '80%'}} maxWidth={426}>              
@@ -78,11 +89,11 @@ class InterestPage extends React.Component {
                             </Grid.Column>
                         </Grid.Row>
                     </Grid>
-                    <Button as={Link} to="/start" style={styles.button}>Keep Going!</Button>
+                    <Button disabled={count !== 2} onClick={this.props.handleSubmit} style={styles.button}>All done!</Button>
                 </Responsive>
             </Grid>
         )
     }
 }
 
-export default InterestPage;
+export default InterestsSelector;

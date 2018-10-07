@@ -5,7 +5,6 @@ import LandingPage from './pages/LandingPage';
 import MakeProfile from './pages/MakeProfile';
 import Login from './pages/Login';
 import Lobby from './pages/Lobby';
-import InterestPage from './pages/InterestPage';
 import NumbersPage from './pages/NumbersPage';
 
 import 'semantic-ui-css/semantic.min.css';
@@ -18,7 +17,6 @@ class App extends Component {
 					<Switch>
 						<Route exact path="/" component={LandingPage}/>
 						<Route path="/start" component={MakeProfile}/>
-						<Route path="/interest" component={InterestPage}/>
 						<Route path="/lobby" component={Lobby}/>
                         <Route path="/login" component={Login}/>
 						<Route path="/numbers" component={NumbersPage}/>

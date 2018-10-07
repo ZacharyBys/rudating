@@ -4,6 +4,7 @@ import { Grid, Responsive } from 'semantic-ui-react';
 
 import RegisterForm from '../components/RegisterForm';
 import AvatarForm from '../components/AvatarForm';
+import InterestsSelector from '../components/InterestsSelector';
 
 import { register, uploadAvatar } from '../util/ApiUtil';
 
@@ -65,7 +66,7 @@ class MakeProfile extends React.Component {
         this.setState({ submitting: true });
         try {
             await uploadAvatar(userId, file);
-            this.setState({ submitting: false, success: true });
+            this.setState((state) => ({ submitting: false, step: state.step + 1 }));
         } catch (error) {
             this.setState({
                 error: true,
@@ -96,6 +97,10 @@ class MakeProfile extends React.Component {
         });
     }
 
+    handleInterestsClick = () => {
+        this.setState({ success: true })
+    }
+
     render() {
         const { step, success, error } = this.state;
 
@@ -123,6 +128,10 @@ class MakeProfile extends React.Component {
                     {
                         step === 2 && 
                         <AvatarForm {...this.state} handleFileChange={this.handleFileChange} handleSubmit={this.handleFileUpload}/>
+                    }
+                    {
+                        step === 3 && <InterestsSelector handleSubmit={this.handleInterestsClick}/>
+
                     }
                 </Responsive>
             </Grid>

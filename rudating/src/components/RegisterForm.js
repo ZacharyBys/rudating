@@ -95,7 +95,8 @@ const RegisterForm = (props) => {
                                 onChange={handleChange}
                                 style={{margin: '1em 0'}}
                                 fluid 
-                                selection />
+                                selection 
+                                required/>
                             <Dropdown 
                                 placeholder="Interested in..." 
                                 name="lookingFor"
@@ -104,7 +105,8 @@ const RegisterForm = (props) => {
                                 onChange={handleChange}
                                 style={{margin: '1em 0'}}
                                 fluid 
-                                selection />
+                                selection 
+                                required />
                             <Message 
                                 error  
                                 header="Error" 

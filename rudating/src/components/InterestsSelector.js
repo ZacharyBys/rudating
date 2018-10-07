@@ -60,31 +60,31 @@ class InterestsSelector extends React.Component {
         const { count } = this.state;
         return (
             <Grid className="home-container" style={styles.container} verticalAlign="middle" centered>
-                <Responsive as={Grid.Column} style={{ width: '80%'}} maxWidth={426}>              
+                <Responsive as={Grid.Column}>              
                     <Header size="large" style={{ margin: 20, color: '#cc0033' }}>Select two images</Header>
                     <Grid>
                         <Grid.Row columns={2}>
                             <Grid.Column>
-                                <Image src={Guitar} style={opacity[0]} onClick={() => this.handleOne(0)}/>
+                                <Image size="small" src={Guitar} style={{...opacity[0], margin: '0 auto'}} onClick={() => this.handleOne(0)}/>
                             </Grid.Column>
                             <Grid.Column>
-                                <Image src={Computer} style={opacity[1]} onClick={() => this.handleOne(1)}/>
-                            </Grid.Column>
-                        </Grid.Row>
-                        <Grid.Row columns={2}>
-                            <Grid.Column>
-                                <Image src={Book} style={opacity[2]} onClick={() => this.handleOne(2)}/>
-                            </Grid.Column>
-                            <Grid.Column>
-                                <Image src={Beer} style={opacity[3]} onClick={() => this.handleOne(3)}/>
+                                <Image size="small" src={Computer} style={{...opacity[1], margin: '0 auto'}} onClick={() => this.handleOne(1)}/>
                             </Grid.Column>
                         </Grid.Row>
                         <Grid.Row columns={2}>
                             <Grid.Column>
-                                <Image src={Plane} style={opacity[4]} onClick={() => this.handleOne(4)}/>
+                                <Image size="small" src={Book} style={{...opacity[2], margin: '0 auto'}} onClick={() => this.handleOne(2)}/>
                             </Grid.Column>
                             <Grid.Column>
-                                <Image src={Hammer} style={opacity[5]} onClick={() => this.handleOne(5)}/>
+                                <Image size="small" src={Beer} style={{...opacity[3], margin: '0 auto'}} onClick={() => this.handleOne(3)}/>
+                            </Grid.Column>
+                        </Grid.Row>
+                        <Grid.Row columns={2}>
+                            <Grid.Column>
+                                <Image size="small" src={Plane} style={{...opacity[4], margin: '0 auto'}} onClick={() => this.handleOne(4)}/>
+                            </Grid.Column>
+                            <Grid.Column>
+                                <Image size="small" src={Hammer} style={{...opacity[5], margin: '0 auto'}} onClick={() => this.handleOne(5)}/>
                             </Grid.Column>
                         </Grid.Row>
                     </Grid>

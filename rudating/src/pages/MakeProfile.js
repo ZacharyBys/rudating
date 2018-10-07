@@ -46,6 +46,7 @@ class MakeProfile extends React.Component {
 
         try {
             const result = await register(firstName, lastName, number, gender, lookingFor);
+            localStorage.setItem('userId', result.data.id);
             this.setState((state) => ({  
                 userId: result.data.id,
                 submitting: false,

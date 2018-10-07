@@ -28,3 +28,10 @@ export const uploadAvatar = async (id, file) => {
         data,
     });
 }
+
+export const updateSId = async (id, sid) => {
+    return await api({
+        method: 'post',
+        url:`/user/socket?id=${id}&sid=${sid}`
+    });
+}

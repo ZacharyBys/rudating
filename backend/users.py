@@ -3,6 +3,42 @@ import random
 
 client = datastore.Client()
 
+def addNewNumber(userId, num):
+    userId = userId if userId != None else 0
+
+    key = client.key('Users', userId)
+    entity = client.get(key)
+
+    if 'savedNumbers' in entity and entity['savedNumbers'] != None:
+        entity['savedNumbers'] = entity['savedNumbers'] + ', ' + num
+    else:
+        entity['savedNumbers'] = num
+
+    client.put(entity)
+    resultId = client.get(key).id
+
+    if resultId == key.id:
+        return num
+    else:
+        return -1
+
+def getNumbers(userId):
+    userId = userId if userId != None else 0
+
+    key = client.key('Users', userId)
+    entity = client.get(key)
+
+    if 'savedNumbers' in entity and entity['savedNumbers'] != None:
+        nums = entity['savedNumbers']
+
+    resultId = client.get(key).id
+
+    if resultId == key.id:
+        return nums
+    else:
+        return -1
+
+
 def createUser(firstName, lastName, gender, number):
 
     key = client.key('Users', random.randint(1, 99999999))

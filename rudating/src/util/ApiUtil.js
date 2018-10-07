@@ -43,6 +43,13 @@ export const activate = async (id) => {
     });
 }
 
+export const getUser = async (id) => {
+    return api({
+        method: 'get',
+        url: `/user?id=${id}`,
+    })
+}
+
 export const login = async (phone) => {
     return await api({
         method: 'post',

@@ -1,5 +1,5 @@
 import React from 'react';
-import { Header, Comment, Form, Button, Icon } from 'semantic-ui-react';
+import { Header, Comment, Form, Button } from 'semantic-ui-react';
 
 import Question from '../components/Question';
 import Message from '../components/Message';
@@ -24,7 +24,7 @@ class Chatroom extends React.Component {
                     content,
                     picture: user.picture,
                 })
-            }), () => console.log(this.state.chats));
+            }));
         }); 
     }
 
@@ -41,13 +41,9 @@ class Chatroom extends React.Component {
         });
     }
 
-    onTimerEnd = () => {
-        this.setState({ timeExpired: true });
-    }
-
     render() {
         const { chats, message, timeExpired } = this.state;
-        const { user } = this.props;
+        const { user, time, onTimerEnd } = this.props;
         return (
             <div className="chatroom">
                 <Header size="huge" textAlign="center" style={{ color: '#cc0033' }}>RU Dating?</Header>

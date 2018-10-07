@@ -20,6 +20,7 @@ configure_uploads(app, photos)
 CORS(app)
 
 activeUsers = []
+selectionTable = {}
 
 @app.route('/')
 def hello_world():
@@ -173,6 +174,22 @@ def handleMessage(msg):
 @socketio.on('join')
 def handleJoin(roomId):
     join_room(roomId)
+
+@socketio.on('selection')
+def handleSelection(selection):
+    roomId = selection['roomId']
+    value = selection['selection']
+    if roomId not in selectionTable:
+        selectionTable[roomId] = value
+    else:
+        selectionTable[roomId] = selectionTable[roomId] + value
+
+    print(selectionTable[roomId])
+
+    if selectionTable[roomId] == 2:
+        emit('selectionMade', 2, room=roomId, broadcast=True)
+    elif selectionTable[roomId] == -1 or selectionTable[roomId] == -4:
+        emit('selectionMade', -1, room=roomId, broadcast=True)
 
 def handleSearch():
     matchResult = match(activeUsers)

@@ -1,9 +1,11 @@
 import React from 'react';
-import { Grid, Responsive, Button, Loader } from 'semantic-ui-react';
+import { Grid, Responsive, Button, Loader, Header } from 'semantic-ui-react';
 import socketIOClient from 'socket.io-client'
 
+import UserCard from '../components/UserCard';
 import Chatroom from '../components/Chatroom';
-import { activate, updateSId } from '../util/ApiUtil';
+import SelectionModal from '../components/SelectionModal';
+import { activate, getUser, updateSId } from '../util/ApiUtil';
 
 const styles = { 
     container: {
@@ -20,30 +22,40 @@ class Lobby extends React.Component {
         socket: null,
         user: false,
         otherUser: false,
-        roomId: ''
+        roomId: '',
+        timeExpired: false,
+        selection: '',
+        selectionReceived: false,
+        gotContact: 0,
      };
 
     componentDidMount() {
         const socket = socketIOClient('http://127.0.0.1:5000');
         socket.on('connected', async data => {
             localStorage.setItem('sId', data);
-            console.log(data);
             const userId = localStorage.getItem('userId');
+            const reponse = await getUser(userId);
             await updateSId(userId, data);
             this.setState({
+                user: reponse.data,
                 socket
             });
         });
-        socket.on('matched', async (user, otherUser, roomId) => {
+        socket.on('matched', (user, otherUser, roomId) => {
             socket.emit('join', roomId);
             this.setState({
                 searching: false,
                 foundMatch: true,
-                user,
                 otherUser,
                 roomId
             });
         });
+        socket.on('selectionMade', (gotContact) => {
+              this.setState({
+                  selectionReceived: true,
+                  gotContact,
+              })
+        })
     }
 
     handleClick = async () => {
@@ -51,7 +63,6 @@ class Lobby extends React.Component {
             try {
                 if (this.state.searching) {
                     const id = localStorage.getItem('userId');
-                    console.log('current user id: ' + id)
                     await activate(id);
                 }
             } catch (err) {
@@ -63,8 +74,33 @@ class Lobby extends React.Component {
         });
     };
 
+    onTimerEnd = () => {
+        this.setState({ timeExpired: true });
+    }
+
+    onSelection = (e, { name, value }) => {
+        const { socket, roomId, user } = this.state;
+        if (value === 'yes') {
+            socket.emit('selection', { selection: 1, roomId });
+        } else if (value === 'no') {
+            this.setState({ [name]: value }, () => {
+                socket.emit('selection', { selection: -2, roomId });
+                window.location.reload()
+            })
+        }
+    }
+
     render() {
-        const { searching, foundMatch } = this.state;
+        const { 
+            searching, 
+            foundMatch, 
+            user, 
+            otherUser, 
+            timeExpired, 
+            selection, 
+            selectionReceived, 
+            gotContact
+        } = this.state;
 
         return (
             <Grid 
@@ -74,13 +110,17 @@ class Lobby extends React.Component {
             centered>
             <Responsive 
                 as={Grid.Column} 
-                maxWidth={426}>              
+                maxWidth={426}>        
+                {
+                    !searching && !foundMatch && user &&
+                    <UserCard {...user} centered/>
+                }      
                 { 
-                    !searching && !foundMatch &&  
+                    !searching && !foundMatch &&  user &&
                     <Button 
                         fluid 
                         size="large"
-                        style={{ background: '#cc0033', color: 'white'}} 
+                        style={{ background: '#cc0033', color: 'white', width: '80%', margin: '0 auto' }} 
                         onClick={this.handleClick}>
                             Find a match
                     </Button> 
@@ -106,7 +146,29 @@ class Lobby extends React.Component {
                     </Button> 
                 }
                 {
-                    foundMatch && <Chatroom user = { this.state.user } otherUser = { this.state.otherUser } roomId = { this.state.roomId } socket = { this.state.socket }/>
+                    foundMatch && !timeExpired &&
+                        <Chatroom 
+                            time={1}
+                            onTimerEnd={this.onTimerEnd}
+                            user={this.state.user} 
+                            otherUser={this.state.otherUser} 
+                            roomId={this.state.roomId} 
+                            socket={this.state.socket} />
+                }
+                {
+                    timeExpired && !selectionReceived &&
+                    <SelectionModal 
+                        open={timeExpired} 
+                        onSelection={this.onSelection} 
+                        selection={selection}/>
+                }
+                {
+                    timeExpired && selectionReceived && gotContact === 2 &&
+                    <Header textAlign="center" style={{ color: '#cc0033' }}>Awesome! {otherUser.firstName}'s contact information was saved!</Header>
+                }
+                {
+                    timeExpired && selectionReceived && gotContact === -1 &&
+                    <Header textAlign="center" style={{ color: '#cc0033' }}>Sorry! Guess things didn't work out with {otherUser.firstName} :(</Header>
                 }
             </Responsive>
         </Grid>

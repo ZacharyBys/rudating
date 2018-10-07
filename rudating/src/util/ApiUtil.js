@@ -59,3 +59,10 @@ export const login = async (phone) => {
         }
     });
 }
+
+export const saveNumber = async (id, number) => {
+    return await api({
+        method: 'post',
+        url: `/phone?id=${id}&number=${number}`
+    });
+}

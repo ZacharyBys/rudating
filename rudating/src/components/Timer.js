@@ -6,11 +6,12 @@ class Timer extends React.Component {
         super(props);
         this.state = {
             value: props.value,
+            intervalId: null,
         };
     }
 
     componentDidMount() {
-        setInterval(() => {
+        const intervalId = setInterval(() => {
             this.setState((state) => {            
                 if (state.value > 1 ) {
                     return {
@@ -18,17 +19,14 @@ class Timer extends React.Component {
                     };
                 } else if (state.value === 1) {
                     this.props.onTimerEnd();
-                    clearInterval();
+                    clearInterval(this.state.intervalId);
                     return {
                         value: state.value - 1
                     };
                 }
             });
         }, 1000);
-    }
-
-    componentWillUnmount() {
-        clearInterval()
+        this.setState({ intervalId })
     }
 
     render() {

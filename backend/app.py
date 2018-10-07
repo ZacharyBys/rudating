@@ -1,5 +1,5 @@
 from flask import Flask, request, Response
-from flask_socketio import SocketIO, emit, send, join_room
+from flask_socketio import SocketIO, emit, send, join_room, leave_room
 from flask_cors import CORS
 from flask_uploads import UploadSet, configure_uploads, IMAGES
 from users import createUser, getUser, getUserByPhone, activateUser, userIsInChat, updateSocketId, getNumbers, addNewNumber
@@ -107,6 +107,7 @@ def activate():
         return json.dumps({'success':False}), 400, {'ContentType':'application/json'}
     else:
         user = getUser(int(id))
+        global activeUsers
         activeUsers.append(user)
         handleSearch()
 
@@ -174,6 +175,10 @@ def handleMessage(msg):
 @socketio.on('join')
 def handleJoin(roomId):
     join_room(roomId)
+
+@socketio.on('leave')
+def on_leave(roomId):
+    leave_room(roomId)
 
 @socketio.on('selection')
 def handleSelection(selection):

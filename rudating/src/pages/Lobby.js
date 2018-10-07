@@ -1,6 +1,7 @@
 import React from 'react';
 import { Grid, Responsive, Button, Loader, Header } from 'semantic-ui-react';
-import socketIOClient from 'socket.io-client'
+import socketIOClient from 'socket.io-client';
+import { Link } from 'react-router-dom';
 
 import UserCard from '../components/UserCard';
 import Chatroom from '../components/Chatroom';
@@ -140,6 +141,17 @@ class Lobby extends React.Component {
                         style={{ background: '#cc0033', color: 'white', width: '80%', margin: '0 auto' }} 
                         onClick={this.handleClick}>
                             Find a match
+                    </Button> 
+                }
+                {
+                    !searching && !foundMatch &&  user &&
+                    <Button 
+                        fluid  
+                        size="large"
+                        style={{ background: '#cc0033', color: 'white', width: '80%', margin: '0 auto 0 auto' }} 
+                        as={Link} to={{ pathname: '/numbers', state: { user: user} }}
+                        params={{ userId: user }}>
+                            Saved Numbers
                     </Button> 
                 }
                 { 

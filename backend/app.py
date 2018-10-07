@@ -40,7 +40,8 @@ def newUser():
 @app.route('/phone', methods=['POST'])
 def addNumber():
     if 'id' in request.args and 'number' in request.args:
-        result = addNewNumber(request.args.get('id'), request.args.get('number'))   
+        id = request.args.get('id')
+        result = addNewNumber(int(id), request.args.get('number'))   
 
         if result != -1:
             return json.dumps({'success':True}), 200, {'ContentType':'application/json'}

@@ -9,10 +9,10 @@ def addNewNumber(userId, num):
     key = client.key('Users', userId)
     entity = client.get(key)
 
-    if 'savedNumbers' in entity:
-        entity['savedNumbers'] = list(entity['savedNumbers']).append(num)
+    if 'savedNumbers' in entity and entity['savedNumbers'] != None:
+        entity['savedNumbers'] = entity['savedNumbers'] + ', ' + num
     else:
-        entity['savedNumbers'] = [num]
+        entity['savedNumbers'] = num
 
     client.put(entity)
     resultId = client.get(key).id

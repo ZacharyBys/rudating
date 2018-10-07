@@ -2,7 +2,7 @@ from flask import Flask, request, Response
 from flask_socketio import SocketIO, emit, send, join_room
 from flask_cors import CORS
 from flask_uploads import UploadSet, configure_uploads, IMAGES
-from users import createUser, getUser, activateUser, userIsInChat, addNewNumber
+from users import createUser, getUser, activateUser, userIsInChat, addNewNumber, getNumbers
 from profilepic import upload_picture
 from matchingThread import MatchingThread
 import json, time
@@ -48,6 +48,16 @@ def addNumber():
 
     return json.dumps({'success':False}), 400, {'ContentType':'application/json'}   
 
+@app.route('/phone', methods=['GET'])
+def getNum():
+    if 'id' in request.args:
+        id = request.args.get('id')
+        result = getNumbers(int(id))
+
+        if result != -1:
+            return json.dumps({'numbers':result}), 200, {'ContentType':'application/json'}
+
+    return json.dumps({'numbers':[]}), 400, {'ContentType':'application/json'}   
 
 @app.route('/user', methods=['GET'])
 def retrieveUser():

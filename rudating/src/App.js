@@ -3,6 +3,7 @@ import { BrowserRouter, Switch, Route } from 'react-router-dom';
 
 import LandingPage from './pages/LandingPage';
 import MakeProfile from './pages/MakeProfile';
+import Lobby from './pages/Lobby';
 
 import 'semantic-ui-css/semantic.min.css';
 import './App.css'
@@ -14,6 +15,7 @@ class App extends Component {
 					<Switch>
 						<Route exact path="/" component={LandingPage}/>
 						<Route path="/start" component={MakeProfile}/>
+						<Route path="/lobby" component={Lobby}/>
 					</Switch>
 				</BrowserRouter>
 			)

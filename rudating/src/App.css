@@ -1,7 +1,32 @@
+@import url('https://fonts.googleapis.com/css?family=Montserrat');
+
 html, body {
     height: 100%;
+    font-family: 'Montserrast', sans-serif;
+}
+
+.ui.header {
+    font-family: 'Montserrast', sans-serif;
 }
 
 #app { 
     height: 100%;
+}
+
+.ui.loader:before {
+    border-color: #cc003344;
+}
+
+.ui.loader:after {
+    border-color: #cc0033 transparent transparent;
+}
+
+.chatroom .chats {
+    box-sizing: border-box;
+    height: 510px;
+    overflow-y: scroll;
+}
+
+.right {
+    padding-left: 3.5em !important;
 }

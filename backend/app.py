@@ -1,14 +1,21 @@
 from flask import Flask, request, Response
 from flask_socketio import SocketIO, emit, send, join_room
 from flask_cors import CORS
+from flask_uploads import UploadSet, configure_uploads, IMAGES
 from users import createUser, getUser, activateUser, userIsInChat
+from profilepic import upload_picture
 from matchingThread import MatchingThread
 import json, time
 
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'VdC8xBfJ4u66hycU'
+app.config['UPLOAD_FOLDER'] = 'pictures'
+app.config['UPLOADED_PHOTOS_DEST'] = 'pictures'
+
 socketio = SocketIO(app)
+photos = UploadSet('photos', IMAGES)
+configure_uploads(app, photos)
 CORS(app)
 
 @app.route('/')
@@ -82,6 +89,18 @@ def outChat():
     else:
         return json.dumps({'success':True}), 200, {'ContentType':'application/json'}
 
+@app.route('/upload', methods=['POST'])
+def uploadPicture():
+    if 'id' in request.args and 'photo' in request.files:
+        id = request.args.get('id')
+        filename = photos.save(request.files['photo'])
+        link = upload_picture(int(id), filename)
+
+        if link == -1:
+            return json.dumps({'success':False}), 400, {'ContentType':'application/json'}
+        else:
+            return json.dumps({'link':link}), 200, {'ContentType':'application/json'}
+
 
 @socketio.on('connect')
 def handleConnect():
@@ -100,4 +119,3 @@ backgroundThread = MatchingThread(socketio)
 
 print('starting thread')
 backgroundThread.start()
-    

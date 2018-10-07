@@ -35,6 +35,7 @@ class Lobby extends React.Component {
             });
         });
         socket.on('matched', async (user, otherUser, roomId) => {
+            socket.emit('join', roomId);
             this.setState({
                 searching: false,
                 foundMatch: true,
@@ -46,18 +47,20 @@ class Lobby extends React.Component {
     }
 
     handleClick = async () => {
-        this.setState((state) => ({ searching: !state.searching }));
-        try {
-            await activate(localStorage.getItem('userId'));
-            this.setState({
-                searching: true
-            }); 
-        } catch (err) {
-            this.setState({
-                searching: false,
-                foundMatch: false
-            })
-        }
+        this.setState((state) => ({ searching: !state.searching }), async () => {
+            try {
+                if (this.state.searching) {
+                    const id = localStorage.getItem('userId');
+                    console.log('current user id: ' + id)
+                    await activate(id);
+                }
+            } catch (err) {
+                this.setState({
+                    searching: false,
+                    foundMatch: false
+                })
+            }
+        });
     };
 
     render() {
@@ -103,7 +106,7 @@ class Lobby extends React.Component {
                     </Button> 
                 }
                 {
-                    foundMatch && <Chatroom user = { this.state.user } otherUser = { this.state.otherUser } roomId = { this.state.roomId }/>
+                    foundMatch && <Chatroom user = { this.state.user } otherUser = { this.state.otherUser } roomId = { this.state.roomId } socket = { this.state.socket }/>
                 }
             </Responsive>
         </Grid>

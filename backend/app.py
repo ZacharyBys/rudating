@@ -19,6 +19,8 @@ photos = UploadSet('photos', IMAGES)
 configure_uploads(app, photos)
 CORS(app)
 
+activeUsers = []
+
 @app.route('/')
 def hello_world():
     socketio.emit('Hello')
@@ -64,11 +66,20 @@ def retrieveUser():
 @app.route('/user/activate', methods=['POST'])
 def activate():
     id = request.args.get('id')
+    print('incoming id: {}'.format(id))
     result = activateUser(int(id), True)
 
     if result == -1:
         return json.dumps({'success':False}), 400, {'ContentType':'application/json'}
     else:
+        user = getUser(int(id))
+        activeUsers.append(user)
+        handleSearch()
+
+        # if searchResult is not None:
+        #     join_room(searchResult[2], searchResult[0], namespace=None)
+        #     join_room(searchResult[2], searchResult[1], namespace=None)
+
         return json.dumps({'success':True}), 200, {'ContentType':'application/json'}
 
 @app.route('/user/deactivate', methods=['PUT'])
@@ -123,26 +134,32 @@ def handleConnect():
 @socketio.on('message')
 def handleMessage(msg):
     roomId = msg['roomId']
-    firstName = msg['firstName']
+    user = msg['user']
     message = msg['message']
-    emit('message', (firstName, message), room=roomId, broadcast=True)
+    emit('messageReceived', (user, message), room=roomId, broadcast=True)
+
+@socketio.on('join')
+def handleJoin(roomId):
+    join_room(roomId)
+
+def handleSearch():
+    matchResult = match(activeUsers)
+    if len(matchResult) != 0:
+        print('TRYING MATCHING NOW')
+        firstUser = matchResult[0]
+        secondUser = matchResult[1]
+        roomId = matchResult[2]
+
+        socketio.emit('matched', (firstUser, secondUser, roomId), room=firstUser['sid'])
+        socketio.emit('matched', (secondUser, firstUser, roomId), room=secondUser['sid'])
+
+        # return [firstUser['sid'], secondUser['sid'], roomId]
+
+        # join_room(roomId, firstUser['sid'], request.namespace)
+        # join_room(roomId, secondUser['sid'], request.namespace)
 
 
 socketio.run(app, debug=True, use_reloader=False)
-
-# while True:
-matchResult = match()
-firstUser = matchResult[0]
-firstSId = matchResult[1]
-secondUser = matchResult[2]
-secondSId = matchResult[3]
-roomId = matchResult[4]
-
-socketio.emit('matched', (firstUser, secondUser, roomId), room=firstSId)
-socketio.emit('matched', (firstUser, secondUser, roomId), room=secondSId)
-
-join_room(roomId, firstSId)
-join_room(roomId, secondSId)
 
 # time.sleep(10)
 

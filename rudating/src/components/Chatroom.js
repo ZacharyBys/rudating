@@ -11,20 +11,20 @@ class Chatroom extends React.Component {
         this.state = {
             chats: [],
             message: '',
-            timeExpired: false,
-            socket: null
+            timeExpired: false
         };
     }
 
     componentDidMount() {
-        const { socket } = this.state;
-        socket.on('message', (sender, message) => {
-            this.setState(state => ({
+        const { socket } = this.props;
+        socket.on('messageReceived', (user, content) => {
+            this.setState((state) => ({
                 chats: state.chats.concat({
-                    username: sender,
-                    content: message,
+                    username: user.firstName,
+                    content,
+                    picture: user.picture,
                 })
-            }));
+            }), () => console.log(this.state.chats));
         }); 
     }
 
@@ -32,10 +32,10 @@ class Chatroom extends React.Component {
         this.setState({ message: value });
     }
 
-    handleSubmit = () => {
-        const { message, socket } = this.state;
-        const { user, roomId } = this.props;
-        socket.emit('message', { firstName: user.firstName, message, roomId });
+    handleClick = () => {
+        const { message } = this.state;
+        const { user, roomId, socket } = this.props;
+        socket.emit('message', { user, message, roomId });
         this.setState({ 
             message: '',
         });
@@ -46,11 +46,12 @@ class Chatroom extends React.Component {
     }
 
     render() {
-        const { chats, message, timeExpired, user } = this.state;
+        const { chats, message, timeExpired } = this.state;
+        const { user } = this.props;
         return (
             <div className="chatroom">
                 <Header size="huge" textAlign="center" style={{ color: '#cc0033' }}>RU Dating?</Header>
-                <Timer value={5} onTimerEnd={this.onTimerEnd}/>
+                <Timer value={100000000} onTimerEnd={this.onTimerEnd}/>
                 <Question question="What was your childhood like?"/>
                 <Comment.Group className="chats">
                     {
@@ -59,7 +60,7 @@ class Chatroom extends React.Component {
                         )
                     }
                 </Comment.Group>
-                <Form size='large' onSubmit={this.handleSubmit}>
+                <Form size='large'>
                     <Form.Input 
                         fluid
                         icon="heart outline"
@@ -70,6 +71,7 @@ class Chatroom extends React.Component {
                     <Button 
                         fluid 
                         style={{ background: '#cc0033', color: 'white'}} 
+                        onClick={this.handleClick}
                         size='large'
                         disabled={!message.replace(/\s/g, '').length || timeExpired }>
                             Send

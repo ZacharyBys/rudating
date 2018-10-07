@@ -1,17 +1,17 @@
 import React from 'react';
-import { Grid, Responsive, Button, Loader, Header } from 'semantic-ui-react';
+import { Grid, Responsive, Button, Loader, Header, Icon } from 'semantic-ui-react';
 import socketIOClient from 'socket.io-client';
 import { Link } from 'react-router-dom';
 
 import UserCard from '../components/UserCard';
 import Chatroom from '../components/Chatroom';
 import SelectionModal from '../components/SelectionModal';
-import { activate, getUser, updateSId, saveNumber, getQuestion } from '../util/ApiUtil';
+import { activate, getUser, updateSId, saveNumber } from '../util/ApiUtil';
 
 const styles = { 
     container: {
         height: '100%',
-        backgroundColor: 'white', 
+         
         margin: '0 auto',
     },
 };
@@ -115,11 +115,11 @@ class Lobby extends React.Component {
     onTimerEnd = () => {
         const { socket, roomId } = this.state;
         socket.emit('sentiment', roomId);
-        // this.setState({ timeExpired: true });
+        this.setState({ timeExpired: true });
     }
 
     onSelection = (e, { name, value }) => {
-        const { socket, roomId, user } = this.state;
+        const { socket, roomId } = this.state;
         if (value === 'yes') {
             socket.emit('selection', { selection: 1, roomId });
         } else if (value === 'no') {
@@ -152,7 +152,7 @@ class Lobby extends React.Component {
             centered>
             <Responsive 
                 as={Grid.Column} 
-                maxWidth={426}>        
+                >        
                 {
                     !searching && !foundMatch && user &&
                     <UserCard {...user} centered/>
@@ -162,8 +162,9 @@ class Lobby extends React.Component {
                     <Button 
                         fluid 
                         size="large"
-                        style={{ background: '#cc0033', color: 'white', width: '80%', margin: '0 auto' }} 
+                        style={{ background: '#cc0033', color: 'white', width: '80%', maxWidth: '350px', margin: '0 auto' }} 
                         onClick={this.handleClick}>
+                            <Icon name="heart outline"/>
                             Find a match
                     </Button> 
                 }
@@ -172,9 +173,10 @@ class Lobby extends React.Component {
                     <Button 
                         fluid  
                         size="large"
-                        style={{ background: '#cc0033', color: 'white', width: '80%', margin: '0 auto 0 auto' }} 
+                        style={{ background: '#cc0033', color: 'white', width: '80%', maxWidth: '350px', margin: '1em auto' }} 
                         as={Link} to={{ pathname: '/numbers', state: { user: user} }}
                         params={{ userId: user }}>
+                            <Icon name="phone"/>
                             Saved Numbers
                     </Button> 
                 }
@@ -193,7 +195,7 @@ class Lobby extends React.Component {
                     <Button 
                         fluid 
                         size="large"
-                        style={{ margin: '1em 0', background: '#cc0033', color: 'white'}} 
+                        style={{ background: '#cc0033', color: 'white', width: '80%', maxWidth: '300px', margin: '1em auto' }} 
                         onClick={this.handleClick}>
                             Go back
                     </Button> 

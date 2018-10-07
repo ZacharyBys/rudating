@@ -28,7 +28,6 @@ def getUser(userId):
     
     key = client.key('Users', userId)
     entity = client.get(key)
-    print('in')
 
     if entity != None:
         user = {}
@@ -38,6 +37,23 @@ def getUser(userId):
         return user
     else:
         return -1
+
+def getUserByPhone(phone):
+    phone = phone if phone != None else 0
+    query = client.query(kind='Users')
+    query.add_filter('number', '=', phone)
+    queryResult = list(query.fetch(limit=1))
+    entity = queryResult[0]
+
+    if entity != None:
+        user = {}
+        for key, value in entity.items():
+            user[key] = value
+
+        return user
+    else:
+        return -1
+
 
 def activateUser(userId, activate):
     userId = userId if userId != None else 0

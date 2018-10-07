@@ -77,7 +77,9 @@ class Lobby extends React.Component {
         socket.on('sentimentScore', score => {
             let sentiment;
             console.log(score);
-            if (score < -0.5) {
+            if (score <= -10) {
+                sentiment = 'N/A';
+            } else if (score < -0.5 && score >= -1) {
                 sentiment = 'Really Bad :(';
             } else if (score < -0.1 && score >= -0.5) {
                 sentiment = 'Not So Great';

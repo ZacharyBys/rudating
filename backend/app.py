@@ -31,7 +31,7 @@ def login():
     data = request.get_json()
     phone = data['number']
 
-    user = getUserByPhone(int(phone))
+    user = getUserByPhone(phone)
     if user != -1:
         return json.dumps(user), 200, {'ContentType': 'application/json'}
     else:
@@ -138,7 +138,6 @@ def uploadPicture():
 
 @socketio.on('connect')
 def handleConnect():
-    print(request.sid)
     emit('connected', request.sid, room=request.sid)
 
 

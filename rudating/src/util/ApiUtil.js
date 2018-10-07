@@ -42,3 +42,13 @@ export const activate = async (id) => {
         url: `/user/activate?id=${id}`
     });
 }
+
+export const login = async (phone) => {
+    return await api({
+        method: 'post',
+        url: '/login',
+        data: {
+            number: phone
+        }
+    });
+}

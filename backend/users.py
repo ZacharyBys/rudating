@@ -28,7 +28,6 @@ def getUser(userId):
     
     key = client.key('Users', userId)
     entity = client.get(key)
-
     if entity != None:
         user = {}
         for key, value in entity.items():
@@ -39,17 +38,17 @@ def getUser(userId):
         return -1
 
 def getUserByPhone(phone):
-    phone = phone if phone != None else 0
+    phone = phone if phone != None else ''
     query = client.query(kind='Users')
-    query.add_filter('number', '=', phone)
-    queryResult = list(query.fetch(limit=1))
+    query.add_filter('number', '=', str(phone))
+    queryResult = list(query.fetch())
     entity = queryResult[0]
-
+    
     if entity != None:
         user = {}
         for key, value in entity.items():
             user[key] = value
-
+        user['id'] = entity.id
         return user
     else:
         return -1

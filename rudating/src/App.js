@@ -3,6 +3,7 @@ import { BrowserRouter, Switch, Route } from 'react-router-dom';
 
 import LandingPage from './pages/LandingPage';
 import MakeProfile from './pages/MakeProfile';
+import Login from './pages/Login';
 import Lobby from './pages/Lobby';
 import InterestPage from './pages/InterestPage';
 
@@ -18,6 +19,7 @@ class App extends Component {
 						<Route path="/start" component={MakeProfile}/>
 						<Route path="/interest" component={InterestPage}/>
 						<Route path="/lobby" component={Lobby}/>
+                        <Route path="/login" component={Login}/>
 					</Switch>
 				</BrowserRouter>
 			)

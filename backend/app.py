@@ -2,7 +2,7 @@ from flask import Flask, request, Response
 from flask_socketio import SocketIO, emit, send, join_room
 from flask_cors import CORS
 from flask_uploads import UploadSet, configure_uploads, IMAGES
-from users import createUser, getUser, activateUser, userIsInChat
+from users import createUser, getUser, activateUser, userIsInChat, updateSocketId
 from profilepic import upload_picture
 from matchingThread import MatchingThread
 import json, time
@@ -37,6 +37,17 @@ def newUser():
     else:
         return json.dumps({'success':False}), 400, {'ContentType':'application/json'} 
 
+@app.route('/user/socket', methods=['POST'])
+def updateSocket():
+    if 'id' in request.args and 'sid' in request.args:
+        id = request.args.get('id')
+        socketId = request.args.get('sid')
+        result = updateSocketId(int(id), socketId)
+
+        if result != -1:
+            return json.dumps(result), 200, {'ContentType':'application/json'} 
+        
+    return json.dumps({'success': False}), 400, {'ContentType': 'application/json'}
 
 @app.route('/user', methods=['GET'])
 def retrieveUser():

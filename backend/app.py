@@ -216,8 +216,11 @@ def handleSelection(selection):
 
 @socketio.on('sentiment')
 def handleSentiment(roomId):
-    score = calculateSentiment(conversationTable[roomId])
-    emit('sentimentScore', score, room=roomId)
+    if roomId not in conversationTable:
+        emit('sentimentScore', -10, room=roomId)
+    else:
+        score = calculateSentiment(conversationTable[roomId])
+        emit('sentimentScore', score, room=roomId)
 
 def handleSearch():
     matchResult = match(activeUsers)

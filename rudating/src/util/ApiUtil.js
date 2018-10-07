@@ -47,5 +47,15 @@ export const getUser = async (id) => {
     return api({
         method: 'get',
         url: `/user?id=${id}`,
+    })
+}
+
+export const login = async (phone) => {
+    return await api({
+        method: 'post',
+        url: '/login',
+        data: {
+            number: phone
+        }
     });
 }

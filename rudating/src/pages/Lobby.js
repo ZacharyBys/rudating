@@ -5,7 +5,7 @@ import socketIOClient from 'socket.io-client'
 import UserCard from '../components/UserCard';
 import Chatroom from '../components/Chatroom';
 import SelectionModal from '../components/SelectionModal';
-import { activate, getUser, updateSId, saveNumber } from '../util/ApiUtil';
+import { activate, getUser, updateSId, saveNumber, getQuestion } from '../util/ApiUtil';
 
 const styles = { 
     container: {
@@ -27,9 +27,10 @@ class Lobby extends React.Component {
         selection: '',
         selectionReceived: false,
         gotContact: 0,
+        question: null,
      };
 
-    componentDidMount() {
+    componentDidMount = async () => {
         const socket = socketIOClient('http://127.0.0.1:5000');
         socket.on('connected', async data => {
             localStorage.setItem('sId', data);
@@ -41,13 +42,14 @@ class Lobby extends React.Component {
                 socket
             });
         });
-        socket.on('matched', (user, otherUser, roomId) => {
+        socket.on('matched', (user, otherUser, question, roomId) => {
             socket.emit('join', roomId);
             this.setState({
                 searching: false,
                 foundMatch: true,
                 otherUser,
-                roomId
+                roomId,
+                question,
             });
         });
         socket.on('selectionMade', (gotContact) => {
@@ -69,7 +71,7 @@ class Lobby extends React.Component {
                     window.location.reload();
                 }
             });
-        })
+        });
     }
 
     handleClick = async () => {
@@ -113,7 +115,8 @@ class Lobby extends React.Component {
             timeExpired, 
             selection, 
             selectionReceived, 
-            gotContact
+            gotContact,
+            question,
         } = this.state;
 
         return (
@@ -160,14 +163,15 @@ class Lobby extends React.Component {
                     </Button> 
                 }
                 {
-                    foundMatch && !timeExpired &&
+                    foundMatch && !timeExpired && question &&
                         <Chatroom   
                             time={1}
                             onTimerEnd={this.onTimerEnd}
                             user={this.state.user} 
                             otherUser={this.state.otherUser} 
                             roomId={this.state.roomId} 
-                            socket={this.state.socket} />
+                            socket={this.state.socket} 
+                            question={question}/>
                 }
                 {
                     timeExpired && !selectionReceived &&

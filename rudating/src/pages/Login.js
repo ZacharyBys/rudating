@@ -9,7 +9,7 @@ import { login } from '../util/ApiUtil';
 const styles = {
     container: {
         height: '100%',
-        backgroundColor: 'white',
+        
         margin: '0 auto',
     },
 };
@@ -58,8 +58,7 @@ class Login extends React.Component {
                 centered>
                 <Responsive
                     as={Grid.Column}
-                    style={{ width: '80%' }}
-                    maxWidth={426}>
+                    style={{ width: '80%' }} >
                     <LoginForm
                         {...this.state}
                         error={error}

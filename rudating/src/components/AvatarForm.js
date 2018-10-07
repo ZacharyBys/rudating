@@ -14,7 +14,7 @@ class AvatarForm extends React.Component {
                 }
                 `}</style>
                 <Grid textAlign='center' style={{ height: '100%' }} verticalAlign='middle'>
-                    <Grid.Column style={{ maxWidth: 450 }}>
+                    <Grid.Column style={{ maxWidth: '450px', width: 'fit-content' }}>
                         <Header as='h2' style={{ color: '#cc0033' }} textAlign='left'>
                             What do you look like?
                         </Header>

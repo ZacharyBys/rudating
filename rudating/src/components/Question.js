@@ -9,7 +9,7 @@ const Question = (props) => {
                 style={{ color: '#cc0033', margin: 0 }}>
                     Question:
             </Header>
-            <Header as='h4' style={{ color: '#cc0033', margin: 0 }}>
+            <Header as='h4' style={{ color: '#cc0033', margin: 0, marginBottom: '0.5em' }}>
                 "{props.question}"
             </Header>
         </div>

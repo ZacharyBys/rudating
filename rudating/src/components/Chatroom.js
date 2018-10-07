@@ -1,5 +1,5 @@
 import React from 'react';
-import { Header, Comment, Form, Button } from 'semantic-ui-react';
+import { Image, Comment, Form, Button } from 'semantic-ui-react';
 
 import Question from '../components/Question';
 import Message from '../components/Message';
@@ -46,10 +46,10 @@ class Chatroom extends React.Component {
         const { user, time, onTimerEnd, question } = this.props;
         return (
             <div className="chatroom">
-                <Header size="huge" textAlign="center" style={{ color: '#cc0033' }}>RU Dating?</Header>
+                <Image src={`${process.env.PUBLIC_URL}/rudating.png`} size="small" style={{ margin: '1em auto' }}/>
                 <Timer value={time} onTimerEnd={onTimerEnd}/>
                 <Question question={question}/>
-                <Comment.Group className="chats">
+                <Comment.Group className="chats" style={{ marginRight: 0, marginBottom: '1em' }}>
                     {
                         chats.map((chat, index) => 
                             <Message key={index} chat={chat} user={user.firstName} />

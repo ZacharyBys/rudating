@@ -11,7 +11,7 @@ import { register, uploadAvatar } from '../util/ApiUtil';
 const styles = { 
     container: {
         height: '100%',
-        backgroundColor: 'white', 
+         
         margin: '0 auto',
     },
 };
@@ -116,8 +116,7 @@ class MakeProfile extends React.Component {
                 centered>
                 <Responsive 
                     as={Grid.Column} 
-                    style={{ width: '80%'}} 
-                    maxWidth={426}>              
+                    style={{ width: '80%'}}>              
                     { step === 1 && 
                         <RegisterForm 
                             {...this.state}

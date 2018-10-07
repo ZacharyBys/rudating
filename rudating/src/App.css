@@ -23,7 +23,8 @@ html, body {
 
 .chatroom .chats {
     box-sizing: border-box;
-    height: 510px;
+    height: 350px;
+    margin: 0 auto;
     overflow-y: scroll;
 }
 

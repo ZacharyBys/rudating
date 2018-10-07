@@ -1,5 +1,4 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
 import { Responsive, Grid, Header, Image, Button } from 'semantic-ui-react';
 import Guitar from '../assets/guitar.png';
 import Book from '../assets/book.png';
@@ -11,7 +10,7 @@ import Hammer from '../assets/hammer.png';
 const styles = { 
     container: {
         height: '100%',
-        backgroundColor: 'white', 
+         
         margin: '0 auto',
     },
     header: {

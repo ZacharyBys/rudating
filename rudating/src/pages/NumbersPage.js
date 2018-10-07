@@ -1,13 +1,12 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
-import { Responsive, Grid, Image, Header, Button, List , Comment} from 'semantic-ui-react';
+import { Responsive, Grid, Header, Comment} from 'semantic-ui-react';
 
 import { login } from '../util/ApiUtil';
 
 const styles = { 
     container: {
         height: '100%',
-        backgroundColor: 'white', 
+         
         margin: '0 auto',
     },
     header: {
@@ -36,7 +35,7 @@ class NumbersPage extends React.Component {
             localStorage.setItem('userId', result.data.id);
             var nums = result.data.savedNumbers.split(', ')
             const newNums = nums.filter(function(item, pos) {
-                return nums.indexOf(item) == pos;
+                return nums.indexOf(item) === pos;
             })
 
             var i;
@@ -63,12 +62,12 @@ class NumbersPage extends React.Component {
         const users = this.state.users;
         return (
             <Grid className="home-container" style={styles.container} verticalAlign="middle" centered>
-                <Responsive as={Grid.Column} style={{ width: '80%'}} maxWidth={426}>              
-                    <Header size="large" style={{ margin: 0, color: '#cc0033' }}>My Phone Numbers</Header>
+                <Responsive as={Grid.Column} verticalAlign="middle" style={{ width: '80%', height: '100%', marginTop: '3em' }} >              
+                    <Header size="large" style={{ margin: 0, color: '#cc0033' }} textAlign="left">My Phone Numbers</Header>
                     {users && <Comment.Group>
                         {
                             users.map((user) => {
-                                return <Comment>
+                                return <Comment key={user.number} style={{ textAlign: 'left' }}>
                                 <Comment.Avatar src={user.picture} />
                                 <Comment.Content>
                                   <Comment.Author as='a'>{user.firstName + ' ' + user.lastName}</Comment.Author>

@@ -10,6 +10,7 @@ const RegisterForm = (props) => {
         handleSubmit, 
         number,
         gender,
+        lookingFor,
         error, 
     } = props;
 
@@ -21,6 +22,21 @@ const RegisterForm = (props) => {
         {
             text: 'Female',
             value: 'Female',
+        },
+        {
+            text: 'Other',
+            value: 'Other',
+        },
+    ];
+
+    const interestedInOptions = [
+        {
+            text: 'Men',
+            value: 'Men',
+        },
+        {
+            text: 'Women',
+            value: 'Women',
         },
         {
             text: 'Other',
@@ -76,6 +92,15 @@ const RegisterForm = (props) => {
                                 name="gender"
                                 value={gender}
                                 options={genderOptions} 
+                                onChange={handleChange}
+                                style={{margin: '1em 0'}}
+                                fluid 
+                                selection />
+                            <Dropdown 
+                                placeholder="Interested in..." 
+                                name="lookingFor"
+                                value={lookingFor}
+                                options={interestedInOptions} 
                                 onChange={handleChange}
                                 style={{margin: '1em 0'}}
                                 fluid 

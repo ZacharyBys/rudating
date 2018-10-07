@@ -1,9 +1,11 @@
 import React from 'react';
 import { Redirect } from 'react-router-dom';
 import { Grid, Responsive } from 'semantic-ui-react';
-import RegisterForm from '../components/RegisterForm';
 
-import { register } from '../util/ApiUtil';
+import RegisterForm from '../components/RegisterForm';
+import AvatarForm from '../components/AvatarForm';
+
+import { register, uploadAvatar } from '../util/ApiUtil';
 
 const styles = { 
     container: {
@@ -15,13 +17,19 @@ const styles = {
 
 class MakeProfile extends React.Component {
     state = {
+        userId: null,
         firstName: '',
         lastName: '',
         number: '',
         gender: '',
+        lookingFor: '',
+        file: null, 
+        filename: '', 
+        fileError: '',
         error: null,
         submitting: false,
         success: false,
+        step: 1,
     };
 
     handleChange = (e, { name, value }) => this.setState({ [name]: value });
@@ -33,12 +41,17 @@ class MakeProfile extends React.Component {
             lastName,
             number,
             gender,
+            lookingFor,
         } = this.state;
 
         try {
-            const result = await register(firstName, lastName, number, gender);
+            const result = await register(firstName, lastName, number, gender, lookingFor);
             localStorage.setItem('userId', result.data.id);
-            this.setState({ success: true });
+            this.setState((state) => ({  
+                userId: result.data.id,
+                submitting: false,
+                step: state.step + 1 
+            }));
         } catch(error) {
             this.setState({ 
                 error: true,
@@ -47,8 +60,44 @@ class MakeProfile extends React.Component {
         }
     };
 
+    handleFileUpload = async (event) => {
+        const { userId, file } = this.state;
+        this.setState({ submitting: true });
+        try {
+            await uploadAvatar(userId, file);
+            this.setState({ submitting: false, success: true });
+        } catch (error) {
+            this.setState({
+                error: true,
+                submitting: false,
+            })
+        }
+    }
+
+    handleFileChange = (event) => {
+        const file = event.target.files[0];
+        let filename = file.name;
+
+        if (filename.length > 10) {
+            filename = filename.slice(0, 11).concat('...');
+        }
+
+        if (file.size > 10 * 1000 * 1000) {
+            this.setState({
+                filename,
+                error: 'The picture you selected is too large!',
+            });
+            return;
+        }
+
+        this.setState({ 
+            file,
+            filename,
+        });
+    }
+
     render() {
-        const { success, error } = this.state;
+        const { step, success, error } = this.state;
 
         if (success) {
             return <Redirect to="/lobby"/>
@@ -64,11 +113,17 @@ class MakeProfile extends React.Component {
                     as={Grid.Column} 
                     style={{ width: '80%'}} 
                     maxWidth={426}>              
-                    <RegisterForm 
-                        {...this.state}
-                        error={error}
-                        handleChange={this.handleChange} 
-                        handleSubmit={this.onSubmit} />
+                    { step === 1 && 
+                        <RegisterForm 
+                            {...this.state}
+                            error={error}
+                            handleChange={this.handleChange} 
+                            handleSubmit={this.onSubmit} />
+                    }
+                    {
+                        step === 2 && 
+                        <AvatarForm {...this.state} handleFileChange={this.handleFileChange} handleSubmit={this.handleFileUpload}/>
+                    }
                 </Responsive>
             </Grid>
         )

@@ -12,7 +12,7 @@ def hello_world():
 
 @app.route('/users', methods=['POST'])
 def newUser():
-    data = request.get_json();
+    data = request.get_json()
     firstName = data['firstName']
     lastName = data['lastName']
     gender = data['gender']

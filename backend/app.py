@@ -2,7 +2,7 @@ from flask import Flask, request, Response
 from flask_socketio import SocketIO, emit, send, join_room
 from flask_cors import CORS
 from flask_uploads import UploadSet, configure_uploads, IMAGES
-from users import createUser, getUser, activateUser, userIsInChat, updateSocketId
+from users import createUser, getUser, activateUser, userIsInChat, addNewNumber, updateSocketId, getNumbers
 from profilepic import upload_picture
 # from matchingThread import MatchingThread
 from matchUtil import match
@@ -39,6 +39,28 @@ def newUser():
         return json.dumps({'id':code, 'firstName':firstName, 'lastName':lastName, 'gender':gender, 'number':number, 'success':True}), 200, {'ContentType':'application/json'} 
     else:
         return json.dumps({'success':False}), 400, {'ContentType':'application/json'} 
+
+@app.route('/phone', methods=['POST'])
+def addNumber():
+    if 'id' in request.args and 'number' in request.args:
+        id = request.args.get('id')
+        result = addNewNumber(int(id), request.args.get('number'))   
+
+        if result != -1:
+            return json.dumps({'success':True}), 200, {'ContentType':'application/json'}
+
+    return json.dumps({'success':False}), 400, {'ContentType':'application/json'}   
+
+@app.route('/phone', methods=['GET'])
+def getNum():
+    if 'id' in request.args:
+        id = request.args.get('id')
+        result = getNumbers(int(id))
+
+        if result != -1:
+            return json.dumps({'numbers':result}), 200, {'ContentType':'application/json'}
+
+    return json.dumps({'numbers':[]}), 400, {'ContentType':'application/json'}   
 
 @app.route('/user/socket', methods=['POST'])
 def updateSocket():

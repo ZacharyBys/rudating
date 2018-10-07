@@ -2,7 +2,7 @@ from flask import Flask, request, Response
 from flask_socketio import SocketIO, emit, send, join_room
 from flask_cors import CORS
 from flask_uploads import UploadSet, configure_uploads, IMAGES
-from users import createUser, getUser, activateUser, userIsInChat, addNewNumber, updateSocketId, getNumbers
+from users import createUser, getUser, getUserByPhone, activateUser, userIsInChat, updateSocketId, getNumbers, addNewNumber
 from profilepic import upload_picture
 # from matchingThread import MatchingThread
 from matchUtil import match
@@ -25,6 +25,17 @@ activeUsers = []
 def hello_world():
     socketio.emit('Hello')
     return 'Hello, World!!'
+
+@app.route('/login', methods=['POST'])
+def login():
+    data = request.get_json()
+    phone = data['number']
+
+    user = getUserByPhone(phone)
+    if user != -1:
+        return json.dumps(user), 200, {'ContentType': 'application/json'}
+    else:
+        return json.dumps({'success': False}), 400, {'ContentType': 'application/json'}
 
 @app.route('/users', methods=['POST'])
 def newUser():
@@ -149,7 +160,6 @@ def uploadPicture():
 
 @socketio.on('connect')
 def handleConnect():
-    print(request.sid)
     emit('connected', request.sid, room=request.sid)
 
 

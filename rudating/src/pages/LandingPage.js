@@ -26,6 +26,8 @@ class LandingPage extends React.Component {
                     <Header size="large" style={{ margin: 0, color: '#cc0033' }}>RU looking for a "study buddy"?</Header>
                     <Header size="large" sub style={{ margin: '0.5em 0', textTransform: 'none', color: '#cc0033'}}>Try RU Dating... Now!</Header>
                     <Button as={Link} to="/start" style={styles.button}>Let's get started!</Button>
+                    <Header size="large" sub style={{ margin: '0.5em 0', textTransform: 'none', color: '#cc0033' }}>Already have an account?</Header>
+                    <Button as={Link} to="/login" style={styles.button}>Sign In</Button>
                 </Responsive>
             </Grid>
         )

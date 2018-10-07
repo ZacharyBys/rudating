@@ -16,3 +16,10 @@ export const register = async (firstName, lastName, number, gender) => {
         }
     });
 };
+
+export const updateSId = async (id, sid) => {
+    return await api({
+        method: 'post',
+        url:`/user/socket?id=${id}&sid=${sid}`
+    });
+}

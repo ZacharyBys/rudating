@@ -36,7 +36,8 @@ class MakeProfile extends React.Component {
         } = this.state;
 
         try {
-            await register(firstName, lastName, number, gender);
+            const result = await register(firstName, lastName, number, gender);
+            localStorage.setItem('userId', result.data.id);
             this.setState({ success: true });
         } catch(error) {
             this.setState({ 
@@ -50,7 +51,7 @@ class MakeProfile extends React.Component {
         const { success, error } = this.state;
 
         if (success) {
-            return <Redirect to="/home"/>
+            return <Redirect to="/lobby"/>
         }
 
         return (

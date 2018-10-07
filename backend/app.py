@@ -42,6 +42,8 @@ def updateSocket():
     if 'id' in request.args and 'sid' in request.args:
         id = request.args.get('id')
         socketId = request.args.get('sid')
+        print('THIS IS ID '+id)
+        print('THIS IS SID '+socketId)
         result = updateSocketId(int(id), socketId)
 
         if result != -1:

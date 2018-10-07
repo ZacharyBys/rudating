@@ -41,17 +41,13 @@ class Chatroom extends React.Component {
         });
     }
 
-    onTimerEnd = () => {
-        this.setState({ timeExpired: true });
-    }
-
     render() {
         const { chats, message, timeExpired } = this.state;
-        const { user } = this.props;
+        const { user, time, onTimerEnd } = this.props;
         return (
             <div className="chatroom">
                 <Header size="huge" textAlign="center" style={{ color: '#cc0033' }}>RU Dating?</Header>
-                <Timer value={100000000} onTimerEnd={this.onTimerEnd}/>
+                <Timer value={time} onTimerEnd={onTimerEnd}/>
                 <Question question="What was your childhood like?"/>
                 <Comment.Group className="chats">
                     {

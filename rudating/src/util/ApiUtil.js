@@ -42,3 +42,10 @@ export const activate = async (id) => {
         url: `/user/activate?id=${id}`
     });
 }
+
+export const getUser = async (id) => {
+    return api({
+        method: 'get',
+        url: `/user?id=${id}`,
+    });
+}

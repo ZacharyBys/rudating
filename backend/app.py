@@ -6,6 +6,7 @@ from users import createUser, getUser, getUserByPhone, activateUser, userIsInCha
 from profilepic import upload_picture
 # from matchingThread import MatchingThread
 from matchUtil import match
+from questions import getQuestion
 import json, time
 
 
@@ -160,6 +161,12 @@ def uploadPicture():
             return json.dumps({'link':link}), 200, {'ContentType':'application/json'}
 
 
+@app.route('/questions', methods=['GET'])
+def selectQuestion():
+    question = getQuestion()
+    return json.dumps({'question': question}), 200, {'ContentType':'application/json'}
+
+
 @socketio.on('connect')
 def handleConnect():
     emit('connected', request.sid, room=request.sid)
@@ -203,8 +210,10 @@ def handleSearch():
         secondUser = matchResult[1]
         roomId = matchResult[2]
 
-        socketio.emit('matched', (firstUser, secondUser, roomId), room=firstUser['sid'])
-        socketio.emit('matched', (secondUser, firstUser, roomId), room=secondUser['sid'])
+        question = getQuestion()
+
+        socketio.emit('matched', (firstUser, secondUser, question, roomId), room=firstUser['sid'])
+        socketio.emit('matched', (secondUser, firstUser, question, roomId), room=secondUser['sid'])
 
         # return [firstUser['sid'], secondUser['sid'], roomId]
 

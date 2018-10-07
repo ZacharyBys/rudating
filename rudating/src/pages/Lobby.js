@@ -1,11 +1,12 @@
 import React from 'react';
 import { Grid, Responsive, Button, Loader, Header } from 'semantic-ui-react';
-import socketIOClient from 'socket.io-client'
+import socketIOClient from 'socket.io-client';
+import { Link } from 'react-router-dom';
 
 import UserCard from '../components/UserCard';
 import Chatroom from '../components/Chatroom';
 import SelectionModal from '../components/SelectionModal';
-import { activate, getUser, updateSId, saveNumber } from '../util/ApiUtil';
+import { activate, getUser, updateSId, saveNumber, getQuestion } from '../util/ApiUtil';
 
 const styles = { 
     container: {
@@ -27,10 +28,11 @@ class Lobby extends React.Component {
         selection: '',
         selectionReceived: false,
         gotContact: 0,
-        sentiment: ''
+        sentiment: '',
+        question: null,
      };
 
-    componentDidMount() {
+    componentDidMount = async () => {
         const socket = socketIOClient('http://127.0.0.1:5000');
         socket.on('connected', async data => {
             localStorage.setItem('sId', data);
@@ -42,13 +44,14 @@ class Lobby extends React.Component {
                 socket
             });
         });
-        socket.on('matched', (user, otherUser, roomId) => {
+        socket.on('matched', (user, otherUser, question, roomId) => {
             socket.emit('join', roomId);
             this.setState({
                 searching: false,
                 foundMatch: true,
                 otherUser,
-                roomId
+                roomId,
+                question,
             });
         });
         socket.on('selectionMade', (gotContact) => {
@@ -137,7 +140,8 @@ class Lobby extends React.Component {
             selection, 
             selectionReceived, 
             gotContact,
-            sentiment
+            sentiment,
+            question,
         } = this.state;
 
         return (
@@ -163,6 +167,17 @@ class Lobby extends React.Component {
                             Find a match
                     </Button> 
                 }
+                {
+                    !searching && !foundMatch &&  user &&
+                    <Button 
+                        fluid  
+                        size="large"
+                        style={{ background: '#cc0033', color: 'white', width: '80%', margin: '0 auto 0 auto' }} 
+                        as={Link} to={{ pathname: '/numbers', state: { user: user} }}
+                        params={{ userId: user }}>
+                            Saved Numbers
+                    </Button> 
+                }
                 { 
                     searching && 
                     <Loader 
@@ -184,14 +199,15 @@ class Lobby extends React.Component {
                     </Button> 
                 }
                 {
-                    foundMatch && !timeExpired &&
+                    foundMatch && !timeExpired && question &&
                         <Chatroom   
                             time={30}
                             onTimerEnd={this.onTimerEnd}
                             user={this.state.user} 
                             otherUser={this.state.otherUser} 
                             roomId={this.state.roomId} 
-                            socket={this.state.socket} />
+                            socket={this.state.socket} 
+                            question={question}/>
                 }
                 {
                     timeExpired && !selectionReceived &&

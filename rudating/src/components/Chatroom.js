@@ -43,12 +43,12 @@ class Chatroom extends React.Component {
 
     render() {
         const { chats, message, timeExpired } = this.state;
-        const { user, time, onTimerEnd } = this.props;
+        const { user, time, onTimerEnd, question } = this.props;
         return (
             <div className="chatroom">
                 <Header size="huge" textAlign="center" style={{ color: '#cc0033' }}>RU Dating?</Header>
-                <Timer value={time} onTimerEnd={this.props.onTimerEnd}/>
-                <Question question="Pineapple on pizza?"/>
+                <Timer value={time} onTimerEnd={onTimerEnd}/>
+                <Question question={question}/>
                 <Comment.Group className="chats">
                     {
                         chats.map((chat, index) => 

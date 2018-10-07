@@ -1,8 +1,9 @@
 from flask import Flask, request, Response
-from flask_socketio import SocketIO, emit, send
+from flask_socketio import SocketIO, emit, send, join_room
 from flask_cors import CORS
 from users import createUser, getUser, activateUser, userIsInChat
-import json
+from matchingThread import MatchingThread
+import json, time
 
 
 app = Flask(__name__)
@@ -84,14 +85,19 @@ def outChat():
 
 @socketio.on('connect')
 def handleConnect():
-    emit('Connected to backend!')
+    print(request.sid)
+    emit('connected', request.sid, room=request.sid)
 
 
 @socketio.on('message')
 def handleMessage(msg):
-    print('Message:' + msg)
-    send(msg)
+    print('ClientID:' + request.sid)
+    emit('message', msg, room=request.sid)
 
 
-if __name__ == '__main__':
-    socketio.run(app)
+socketio.run(app, debug=True, use_reloader=False)
+backgroundThread = MatchingThread(socketio)
+
+print('starting thread')
+backgroundThread.start()
+    

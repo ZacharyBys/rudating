@@ -2,3 +2,5 @@ flask-socketio
 eventlet
 google-cloud-datastore
 flask-cors
+flask-uploads
+google-cloud-storage

@@ -5,7 +5,7 @@ const Message = ({chat, user}) => (
     <Comment className={`chat ${user === chat.username ? "right" : ""}`} style={{ textAlign: 'left' }}>
         { 
             user !== chat.username && 
-            <Comment.Avatar src='https://react.semantic-ui.com/images/avatar/small/matt.jpg' />
+            <Comment.Avatar src={chat.picture} />
         }
         <Comment.Content>
             <Comment.Author>{chat.username}</Comment.Author>

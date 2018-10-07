@@ -113,3 +113,18 @@ def userIsInChat(userId, inChat):
         return resultId
     else:
         return -1
+
+def updateSocketId(userId, socketId):
+    userId = userId if userId != None else 0
+
+    key = client.key('Users', userId)
+    entity = client.get(key)
+
+    entity['sid'] = socketId
+    client.put(entity)
+    resultId = client.get(key).id
+
+    if resultId == key.id:
+        return socketId
+    else:
+        return -1

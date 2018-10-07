@@ -1,7 +1,9 @@
 import React from 'react';
 import { Grid, Responsive, Button, Loader } from 'semantic-ui-react';
+import socketIOClient from 'socket.io-client'
 
 import Chatroom from '../components/Chatroom';
+import { updateSId } from '../util/ApiUtil';
 
 const styles = { 
     container: {
@@ -15,7 +17,21 @@ class Lobby extends React.Component {
     state = { 
         searching: false,
         foundMatch: false,
+        socket: false
      };
+
+    componentDidMount() {
+        const socket = socketIOClient('http://127.0.0.1:5000');
+        socket.on('connected', async data => {
+            localStorage.setItem('sId', data);
+            console.log(data);
+            const userId = localStorage.getItem('userId');
+            await updateSId(userId, data);
+            this.setState({
+                socket: socket
+            });
+        });
+    }
 
     handleClick = () => {
         this.setState((state) => ({ searching: !state.searching }));

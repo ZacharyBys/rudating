@@ -27,6 +27,7 @@ class Lobby extends React.Component {
         selection: '',
         selectionReceived: false,
         gotContact: 0,
+        sentiment: ''
      };
 
     componentDidMount() {
@@ -69,7 +70,27 @@ class Lobby extends React.Component {
                     window.location.reload();
                 }
             });
-        })
+        });
+        socket.on('sentimentScore', score => {
+            let sentiment;
+            console.log(score);
+            if (score < -0.5) {
+                sentiment = 'Really Bad :(';
+            } else if (score < -0.1 && score >= -0.5) {
+                sentiment = 'Not So Great';
+            } else if (score < 0.1 && score >= -0.1) {
+                sentiment = 'Mixed';
+            } else if (score < 0.5 && score >= 0.1) {
+                sentiment = 'Positive';
+            } else {
+                sentiment = 'Amazing!';
+            }
+
+            this.setState({
+                sentiment,
+                timeExpired: true
+            });
+        });
     }
 
     handleClick = async () => {
@@ -89,7 +110,9 @@ class Lobby extends React.Component {
     };
 
     onTimerEnd = () => {
-        this.setState({ timeExpired: true });
+        const { socket, roomId } = this.state;
+        socket.emit('sentiment', roomId);
+        // this.setState({ timeExpired: true });
     }
 
     onSelection = (e, { name, value }) => {
@@ -113,7 +136,8 @@ class Lobby extends React.Component {
             timeExpired, 
             selection, 
             selectionReceived, 
-            gotContact
+            gotContact,
+            sentiment
         } = this.state;
 
         return (
@@ -162,7 +186,7 @@ class Lobby extends React.Component {
                 {
                     foundMatch && !timeExpired &&
                         <Chatroom   
-                            time={1}
+                            time={30}
                             onTimerEnd={this.onTimerEnd}
                             user={this.state.user} 
                             otherUser={this.state.otherUser} 
@@ -174,7 +198,8 @@ class Lobby extends React.Component {
                     <SelectionModal 
                         open={timeExpired} 
                         onSelection={this.onSelection} 
-                        selection={selection}/>
+                        selection={selection}
+                        sentiment={sentiment}/>
                 }
                 {
                     timeExpired && selectionReceived && gotContact === 2 &&

@@ -1,5 +1,5 @@
 import React from 'react';
-import { List, Image, Comment } from 'semantic-ui-react';
+import { Comment } from 'semantic-ui-react';
 
 const Message = ({chat, user}) => (
     <Comment className={`chat ${user === chat.username ? "right" : ""}`} style={{ textAlign: 'left' }}>

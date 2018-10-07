@@ -1,5 +1,5 @@
 import React from 'react';
-import { Header, Comment, Form, Button, Icon } from 'semantic-ui-react';
+import { Header, Comment, Form, Button } from 'semantic-ui-react';
 
 import Question from '../components/Question';
 import Message from '../components/Message';
@@ -24,7 +24,7 @@ class Chatroom extends React.Component {
                     content,
                     picture: user.picture,
                 })
-            }), () => console.log(this.state.chats));
+            }));
         }); 
     }
 

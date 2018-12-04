@@ -1,5 +1,7 @@
 # HackRU Fall 2018 Project Submission
 
+Project Link: https://devpost.com/software/rudating
+
 ## About the project
 
 ### Inspiration
